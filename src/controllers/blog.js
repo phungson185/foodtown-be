@@ -14,6 +14,8 @@ const getBlog = async (id) => {
     try {
         const blog = await Blog.findById(id).populate('comments.user');
         const commentCount = blog?.comments?.length;
+        blog.viewCount ++;
+        await blog.save();
         if (blog?.comments?.length > 3) blog.comments = blog?.comments?.splice(0, 3);
         return {blog, commentCount};
     } catch (error) {
@@ -22,11 +24,8 @@ const getBlog = async (id) => {
 }
 
 const getCommentsBlog = async (id, page) => {
-    console.log(id, page);
     try {
         const blog = await Blog.findById(id).populate('comments.user');
-        // console.log(3 * parseInt(page));
-        // console.log(3 * (parseInt(page) + 1));
         const result = blog?.comments.splice(3 * parseInt(page), (blog.comments.length - 3 * parseInt(page)) < 3 ? (blog.comments.length - 3 * parseInt(page)) : 3);
         return result;
     } catch (error) {
@@ -57,8 +56,6 @@ const updateBlog = async (blog) => {
             delete blog.thumbnail;
         }
         const updatingBlog = await Blog.findById(blog.id);
-        // console.log(updatingBlog);
-        // console.log(updatingBlog.description);
         updatingFields.forEach((updatingField) => {
             if (updateableFields.find(updateableField => updateableField === updatingField)) {
                 updatingBlog[updatingField] = blog[updatingField];
@@ -75,7 +72,7 @@ const likeBlog = async (userId, blogId) => {
     try {
         const blog = await Blog.findById(blogId);
         if (blog.likes.find(like => like.user.toString() === userId.toString())) {
-            throw 'You have liked this post already!';
+            throw new Error('You have liked this post already!');
         }
         blog.likes.push({ user: userId });
         await blog.save();
@@ -92,7 +89,7 @@ const dislikeBlog = async (userId, blogId) => {
     try {
         const blog = await Blog.findById(blogId);
         if (!blog.likes.find(like => like.user.toString() === userId.toString())) {
-            throw 'You haven\'t liked this post yet!';
+            throw new Error('You haven\'t liked this post yet!');
         }
         blog.likes = blog.likes.filter(like => like.user.toString() !== userId.toString());
         await blog.save();
@@ -107,10 +104,9 @@ const dislikeBlog = async (userId, blogId) => {
 
 const commentBlog = async (user, blogId, comment) => {
     try {
-        console.log(comment);
         const blog = await Blog.findById(blogId);
         if (!blogId) {
-            throw 'Blog not found';
+            throw new Error('Blog not found');
         }
         blog.comments.unshift({
             user: user._id,

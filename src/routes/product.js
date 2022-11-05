@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const productController = require('../controllers/product');
 const multer = require("multer");
+const onlyAdmin = require('../middlewares/onlyAdmin')
+const auth = require('../middlewares/auth');
 
 const imageUpload = multer({
     limits: {
@@ -15,7 +17,7 @@ const imageUpload = multer({
     },
 });
 
-router.post('/', imageUpload.single('image'), async (req, res) => {
+router.post('/', onlyAdmin, imageUpload.single('image'), async (req, res) => {
     const productInfo = req.body;
     const productImage = req.file;
     try {
@@ -26,7 +28,7 @@ router.post('/', imageUpload.single('image'), async (req, res) => {
     }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', onlyAdmin, async (req, res) => {
     try {
         const result = productController.updateBlog({
             id: req.body.id,
@@ -56,5 +58,14 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', productController.getProductById);
+router.get('/:id', auth, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await productController.getProductById(id);
+        res.status(200).send({message: "succcess", result});
+    } catch (error) {
+        res.status(400).send({message: "failure", error});
+    }
+});
+
 module.exports = router;

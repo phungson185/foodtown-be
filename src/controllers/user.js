@@ -5,10 +5,14 @@ const createUser = async (user) => {
     try {
         const newUser = new User(user);
         const token = await newUser.generateAuthToken();
-        // user.tokens.push({token});
+        console.log(token);
+        newUser.tokens.push({token});
         await newUser.save();
         return {
-            user: newUser.toJSON(),
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
             token
         }
     } catch (error) {
@@ -19,10 +23,9 @@ const createUser = async (user) => {
 const login = async (email, password, isLoginAdmin) => {
     try {
         const user = await User.findByCredential(email, password);
-        console.log(isLoginAdmin);
         const token = await user.generateAuthToken();
         if (isLoginAdmin === 'true' && user.role !== ADMIN) {
-            return {error: "You cannot login as an admin"}
+            throw new Error("You cannot login as an admin");
         }
         user.tokens.push({token});
         await user.save();
@@ -43,8 +46,6 @@ const logout = async (user, token) => {
         user.tokens = user.tokens.filter(userToken => userToken === token);
         await user.save();
         return null;
-        // console.log(user);
-        // console.log(token);
     } catch (error) {
         console.log({error});
     }

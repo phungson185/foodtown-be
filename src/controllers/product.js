@@ -1,7 +1,6 @@
 const Product = require('../models/product');
 
 const createProduct = async (productInfo, productImage) => {
-    console.log(productInfo.ingredients.split(','));
     try {
         const product = new Product({
             name: productInfo.name,
@@ -22,17 +21,15 @@ const createProduct = async (productInfo, productImage) => {
     }
 }
 
-const getProductById = async (req, res) => {
-    const {id} = req.params;
-    console.log(id);
+const getProductById = async (id) => {
     try {
         const result = await Product.findById(id);
         if (!result) {
-            res.status(404).send({message: "failure", error: "Product cannot be found"});
+            throw new Error('Product cannot be found');
         }
-        res.status(200).send({message: "success", result});
+        return result;
     } catch (error) {
-        res.status(500).send({message: "failure", error});
+        console.log({error});
     }
 }
 

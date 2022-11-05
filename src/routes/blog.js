@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const blogController = require('../controllers/blog');
 const auth = require('../middlewares/auth');
+const onlyAdmin = require('../middlewares/onlyAdmin');
 const multer = require("multer");
 
 const imageUpload = multer({
@@ -36,7 +37,7 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.get('/:id/comments', async (req, res) => {
+router.get('/:id/comments', auth, async (req, res) => {
     const { id } = req.params;
     const { page } = req.query;
     try {
@@ -47,7 +48,7 @@ router.get('/:id/comments', async (req, res) => {
     }
 })
 
-router.post('/', imageUpload.single('thumbnail'), (req, res) => {
+router.post('/', onlyAdmin, imageUpload.single('thumbnail'), (req, res) => {
     try {
         const result = blogController.createBlog({
             name: req.body.name,
@@ -64,7 +65,7 @@ router.post('/', imageUpload.single('thumbnail'), (req, res) => {
     }
 })
 
-router.patch('/', imageUpload.single('thumbnail'), (req, res) => {
+router.patch('/', onlyAdmin, imageUpload.single('thumbnail'), (req, res) => {
     try {
         const result = blogController.updateBlog({
             id: req.body.id,
@@ -108,8 +109,6 @@ router.patch('/comment/:id', auth, async (req, res) => {
     const blogId = req.params.id;
     const user = req.user;
     const { comment } = req.body;
-    console.log(req.body);
-    console.log(comment);
     try {
         const result = await blogController.commentBlog(user, blogId, comment);
         res.status(201).send({message: "success", result});
@@ -118,7 +117,7 @@ router.patch('/comment/:id', auth, async (req, res) => {
     }
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', onlyAdmin, (req, res) => {
     try {
         const id = req.params.id;
         blogController.deleteBlog(id);

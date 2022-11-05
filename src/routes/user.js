@@ -3,10 +3,10 @@ const router = express.Router();
 const userController = require('../controllers/user');
 const auth = require('../middlewares/auth');
 
-router.post('/signup', (req, res) => {
+router.post('/signup', async (req, res) => {
     const user = req.body;
     try {
-        const result = userController.createUser(user);
+        const result = await userController.createUser(user);
         res.status(201).send({message: "Success", result});
     } catch (error) {
         res.status(401).send({message: "Failure", error});
@@ -16,12 +16,8 @@ router.post('/signup', (req, res) => {
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const { admin } = req.query;
-    console.log({email, password, admin});
     try {
         const result = await userController.login(email, password, admin);
-        if (result?.error) {
-            throw result.error;
-        }
         res.status(201).send({message: "Success", result});
     } catch (error) {
         res.status(401).send({message: "Failure", error});
@@ -50,17 +46,5 @@ router.get('/', auth, async (req, res) => {
         res.status(400).send({message: "Failure", error});
     }
 });
-
-// router.get('/', auth, async (req, res) => {
-//     try {
-//         const result = await userController.getAllUsers();
-//         console.log(result);
-//         res.status(200).send({message: "Success", result});
-//     } catch (error) {
-//         res.status(400).send({message: "Failure", error});
-//     }
-// });
-
-// router.get('/')
 
 module.exports = router;

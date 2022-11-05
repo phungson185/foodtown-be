@@ -16,7 +16,7 @@ const imageUpload = multer({
     },
 });
 
-router.post('/', imageUpload.single('logo'), async (req, res) => {
+router.post('/', auth, imageUpload.single('logo'), async (req, res) => {
     const { name } = req.body;
     const logo = req.file;
     try {

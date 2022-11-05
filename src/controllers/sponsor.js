@@ -18,7 +18,6 @@ const addSponsor = async (sponsor) => {
 const getAllSponsors = async () => {
     try {
         const sponsors = await Sponsor.find({});
-        console.log(sponsors);
         return sponsors;
     } catch (error) {
         console.log({error});
