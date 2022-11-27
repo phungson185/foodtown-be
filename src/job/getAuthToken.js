@@ -32,11 +32,11 @@ setInterval(() => {
           chunks.push(chunk);
         });
       
-        res.on("end", function (chunk) {
-          var body = Buffer.concat(chunks);
-          res_in_json = JSON.parse(body.toString());
-          saveConfig(res_in_json.extra.AUTH_TOKEN);
-        });
+        // res.on("end", function (chunk) {
+        //   var body = Buffer.concat(chunks);
+        //   res_in_json = JSON.parse(body.toString());
+        //   saveConfig(res_in_json.extra.AUTH_TOKEN);
+        // });
       
         res.on("error", function (error) {
           console.error(error);

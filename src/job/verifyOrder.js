@@ -39,10 +39,10 @@ setInterval(() => {
             chunks.push(chunk);
         });
         
-        res.on("end", function (chunk) {
-            var body = Buffer.concat(chunks);
-            notifies = JSON.parse(body)?.message?.data?.notifications;
-        });
+        // res.on("end", function (chunk) {
+        //     var body = Buffer.concat(chunks);
+        //     notifies = JSON.parse(body)?.message?.data?.notifications;
+        // });
         
         res.on("error", function (error) {
             console.error(error);
