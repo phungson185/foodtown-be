@@ -8,7 +8,6 @@ const onlyAdmin = async (req, res, next) => {
     const decoded = jwt.verify(token, "secretkey");
     const user = await User.findOne({
       _id: decoded._id,
-      "tokens.token": token,
     });
     if (!user) {
       throw new Error("Unauthorized!");
@@ -17,7 +16,6 @@ const onlyAdmin = async (req, res, next) => {
       throw new Error("Only admin can execute this action!");
     }
     req.user = user;
-    req.token = token;
     next();
   } catch (error) {
     res.status(401).send({ error: "Please authenticate" });
