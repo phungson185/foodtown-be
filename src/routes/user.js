@@ -9,7 +9,7 @@ router.post("/signup", async (req, res) => {
     const result = await userController.createUser(user);
     res.status(201).send({ message: "Success", result });
   } catch (error) {
-    res.status(401).send({ message: "Failure", error });
+    res.status(401).send({ message: "Failure", error: error.message });
   }
 });
 
@@ -20,7 +20,7 @@ router.post("/login", async (req, res) => {
     const result = await userController.login(email, password, admin);
     res.status(201).send({ message: "Success", result });
   } catch (error) {
-    res.status(401).send({ message: "Failure", error });
+    res.status(401).send({ message: "Failure", error: error.message });
   }
 });
 
@@ -29,7 +29,7 @@ router.post("/logout", auth, async (req, res) => {
     const result = await userController.logout(req.user, req.token);
     res.status(201).send({ message: "Success", result });
   } catch (error) {
-    res.status(401).send({ message: "Failure", error });
+    res.status(401).send({ message: "Failure", error: error.message });
   }
 });
 
@@ -41,12 +41,11 @@ router.get("/", auth, async (req, res) => {
         _id: req.user._id,
         firstName: req.user.firstName,
         lastName: req.user.lastName,
-        token: req.token,
         role: req.user.role,
       },
     });
   } catch (error) {
-    res.status(400).send({ message: "Failure", error });
+    res.status(400).send({ message: "Failure", error: error.message });
   }
 });
 

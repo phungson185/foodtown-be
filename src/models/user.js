@@ -43,14 +43,14 @@ const userSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
-  tokens: [
-    {
-      token: {
-        type: String,
-        require: true,
-      },
-    },
-  ],
+  // tokens: [
+  //   {
+  //     token: {
+  //       type: String,
+  //       require: true,
+  //     },
+  //   },
+  // ],
   role: {
     type: String,
     enum: [ADMIN, USER],
@@ -62,13 +62,12 @@ userSchema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;
-  delete userObject.tokens;
   return userObject;
 };
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id }, "secretkey");
+  const token = jwt.sign({ _id: user._id, email: user.email }, "secretkey");
   return token;
 };
 

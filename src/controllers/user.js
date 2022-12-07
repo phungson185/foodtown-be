@@ -5,7 +5,6 @@ const createUser = async (user) => {
   try {
     const newUser = new User(user);
     const token = await newUser.generateAuthToken();
-    newUser.tokens.push({ token });
     await newUser.save();
     return {
       _id: user._id,
@@ -15,7 +14,7 @@ const createUser = async (user) => {
       token,
     };
   } catch (error) {
-    console.log({ error });
+    throw new Error(error);
   }
 };
 
@@ -26,7 +25,6 @@ const login = async (email, password, isLoginAdmin) => {
     if (isLoginAdmin === "true" && user.role !== ADMIN) {
       throw new Error("You cannot login as an admin");
     }
-    user.tokens.push({ token });
     await user.save();
     return {
       _id: user._id,
@@ -36,7 +34,7 @@ const login = async (email, password, isLoginAdmin) => {
       token,
     };
   } catch (error) {
-    console.log({ error });
+    throw new Error(error);
   }
 };
 

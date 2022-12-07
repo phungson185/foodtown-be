@@ -48,13 +48,12 @@ const createBlog = async (blog) => {
   try {
     const newBlog = new Blog({
       ...blog,
-      likes: 0,
       createdAt: await util.time.beautifyDate(new Date()),
     });
     await newBlog.save();
     return newBlog;
   } catch (error) {
-    console.log({ error });
+    throw new Error(error);
   }
 };
 
