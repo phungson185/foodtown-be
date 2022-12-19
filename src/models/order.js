@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
+const { common } = require('../utils')
 
 const orderSchema = mongoose.Schema(
   {
@@ -6,11 +7,13 @@ const orderSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       require: true,
     },
-    productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      require: true,
-      ref: "Product",
-    },
+    products: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        require: true,
+        ref: 'Product',
+      },
+    ],
     phoneNumber: {
       type: String,
       require: true,
@@ -25,14 +28,15 @@ const orderSchema = mongoose.Schema(
       default: 0,
     },
     status: {
-      type: Boolean,
-      default: false,
+      type: Number,
+      enum: common.OrderStatusType,
+      default: common.OrderStatusType.ORDER_PAYMENT_COMPLETED,
     },
   },
   {
     timestamps: true,
   }
-);
+)
 
-const Order = mongoose.model("Order", orderSchema);
-module.exports = Order;
+const Order = mongoose.model('Order', orderSchema)
+module.exports = Order
