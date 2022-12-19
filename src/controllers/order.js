@@ -1,5 +1,6 @@
-const Order = require("../models/order");
-const Product = require("../models/product");
+const Order = require('../models/order')
+const Product = require('../models/product')
+const { common } = require('../utils')
 
 const createOrder = async ({ userId, products, phoneNumber, amount }) => {
   try {
@@ -17,36 +18,35 @@ const createOrder = async ({ userId, products, phoneNumber, amount }) => {
     });
     await order.save();
   } catch (error) {
-    console.log({ error });
+    console.log({ error })
   }
-};
+}
 
 const cancelOrder = async ({ orderId }) => {
   try {
-    const order = await Order.findById(orderId);
-    if (order.status === true) {
-      const product = await Product.findById(order.productId);
-      product.quantity++;
-      await product.save();
-    }
-    await Order.deleteOne({ _id: orderId });
-    return null;
+    const order = await Order.findOneAndUpdate(
+      { _id: orderId },
+      { status: common.OrderStatusType.ORDER_CANCEL }
+    )
+    await Product.findByIdAndUpdate({ _id: { $in: order.products } }, { $inc: { quantity: 1 } })
+
+    return null
   } catch (error) {
-    console.log({ error });
+    console.log({ error })
   }
-};
+}
 
 const getOrderByUser = async ({ userId }) => {
   try {
     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
     return orders;
   } catch (error) {
-    console.log({ error });
+    console.log({ error })
   }
-};
+}
 
 module.exports = {
   createOrder,
   getOrderByUser,
   cancelOrder,
-};
+}

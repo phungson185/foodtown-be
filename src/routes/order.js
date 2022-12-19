@@ -1,17 +1,17 @@
-const express = require("express");
-const router = express.Router();
-const orderController = require("../controllers/order");
-const auth = require("../middlewares/auth");
+const express = require('express')
+const router = express.Router()
+const orderController = require('../controllers/order')
+const auth = require('../middlewares/auth')
 
-router.get("/", auth, async (req, res) => {
-  const userId = req.user._id;
+router.get('/', auth, async (req, res) => {
+  const userId = req.user._id
   try {
-    const result = await orderController.getOrderByUser({ userId });
-    res.status(201).send({ message: "success", result });
+    const result = await orderController.getOrderByUser({ userId })
+    res.status(201).send({ message: 'success', result })
   } catch (error) {
-    res.status(401).send({ message: "failure", error });
+    res.status(401).send({ message: 'failure', error })
   }
-});
+})
 
 router.post("/", auth, async (req, res) => {
   const { products, amount } = req.body;
@@ -23,21 +23,21 @@ router.post("/", auth, async (req, res) => {
       products,
       phoneNumber,
       amount,
-    });
-    res.status(201).send({ message: "success", result });
+    })
+    return res.status(201).send({ success: true, message: 'Create Order Success', result })
   } catch (error) {
-    res.status(401).send({ message: "failure", error });
+    res.status(401).send({ message: 'failure', error })
   }
-});
+})
 
-router.delete("/", auth, async (req, res) => {
-  const { orderId } = req.body;
+router.delete('/', auth, async (req, res) => {
+  const { orderId } = req.body
   try {
-    const result = await orderController.cancelOrder({ orderId });
-    res.status(201).send({ message: "success", result });
+    const result = await orderController.cancelOrder({ orderId })
+    res.status(201).send({ message: 'success', result })
   } catch (error) {
-    res.status(401).send({ message: "failure", error });
+    res.status(401).send({ message: 'failure', error })
   }
-});
+})
 
-module.exports = router;
+module.exports = router
