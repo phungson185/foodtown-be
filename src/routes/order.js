@@ -14,13 +14,13 @@ router.get("/", auth, async (req, res) => {
 });
 
 router.post("/", auth, async (req, res) => {
-  const { productId, amount } = req.body;
+  const { products, amount } = req.body;
   const userId = req.user._id;
   const phoneNumber = req.user.phoneNumber;
   try {
     const result = await orderController.createOrder({
       userId,
-      productId,
+      products,
       phoneNumber,
       amount,
     });

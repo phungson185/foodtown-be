@@ -1,14 +1,21 @@
 const Order = require("../models/order");
 const Product = require("../models/product");
 
-const createOrder = async ({ userId, productId, phoneNumber, amount }) => {
+const createOrder = async ({ userId, products, phoneNumber, amount }) => {
   try {
-    const product = await Product.findById(productId);
-    if (!product) throw new Error("Product not found");
-    if (product.quantity <= 0) throw new Error("Out of quantity");
-    const order = new Order({ userId, productId, phoneNumber, amount });
+    for (let i = 0; i < products.length; i++) {
+      const product = await Product.findById(products[i].id);
+      if (product.quantity === 0) {
+        throw new Error("Product out of stock");
+      }
+    }
+    const order = new Order({
+      userId,
+      products,
+      phoneNumber,
+      amount,
+    });
     await order.save();
-    return order;
   } catch (error) {
     console.log({ error });
   }
@@ -31,7 +38,7 @@ const cancelOrder = async ({ orderId }) => {
 
 const getOrderByUser = async ({ userId }) => {
   try {
-    const orders = await Order.find({ userId }).populate("productId");
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
     return orders;
   } catch (error) {
     console.log({ error });
