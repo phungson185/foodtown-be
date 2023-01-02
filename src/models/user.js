@@ -19,12 +19,6 @@ const userSchema = mongoose.Schema({
     type: String,
     require: true,
     trim: true,
-    // To do: Validate phone number
-    // validate(value) {
-    //     if (!validator.isMobilePhone(value, 'vi-VN')){
-    //         throw new Error('Phone number is invalid');
-    //     }
-    // }
   },
   email: {
     type: String,
@@ -56,12 +50,25 @@ const userSchema = mongoose.Schema({
     enum: [ADMIN, USER],
     default: USER,
   },
+  avatar: {
+    name: {
+      type: String,
+      trim: true,
+    },
+    data: {
+      type: Buffer,
+    },
+  },
+  address: {
+    type: String,
+  }
 });
 
 userSchema.methods.toJSON = function () {
   const user = this;
   const userObject = user.toObject();
   delete userObject.password;
+  delete userObject.__v;
   return userObject;
 };
 

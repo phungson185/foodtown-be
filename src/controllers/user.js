@@ -57,9 +57,33 @@ const getAllUsers = async () => {
   }
 };
 
+const update = async (req) => {
+  const newUser = {
+    firstName: req.body?.firstName,
+    lastName: req.body?.lastName,
+    phoneNumber: req.body?.phoneNumber,
+    avatar: req.file
+      ? {
+          name: req.file?.originalname,
+          data: req.file?.buffer,
+        }
+      : null,
+    address: req.body?.address,
+  };
+  try {
+    const updated = await User.findByIdAndUpdate(req.user._id, newUser, {
+      new: true,
+    });
+    return updated;
+  } catch (error) {
+    console.log({ error });
+  }
+};
+
 module.exports = {
   createUser,
   login,
   logout,
   getAllUsers,
+  update,
 };
