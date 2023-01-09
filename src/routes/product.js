@@ -33,7 +33,7 @@ router.post("/", onlyAdmin, imageUpload.single("image"), async (req, res) => {
 
 router.patch("/:id", onlyAdmin, async (req, res) => {
   try {
-    const result = productController.updateBlog({
+    const result = await productController.updateBlog({
       id: req.body.id,
       name: req.body.name,
       ingredients: req.body.ingredients,
@@ -47,7 +47,7 @@ router.patch("/:id", onlyAdmin, async (req, res) => {
           }
         : null,
     });
-    res.status(201).send({ message: "succcess", result });
+    res.status(201).send({ message: "success", result });
   } catch (error) {
     res.status(401).send({ message: "failure", error });
   }
