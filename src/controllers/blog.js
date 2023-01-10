@@ -17,8 +17,8 @@ const getBlog = async (id) => {
   try {
     const blog = await Blog.findById(id).populate('comments.user')
     const commentCount = blog?.comments?.length
-    await blog.save()
-    if (blog?.comments?.length > 3) blog.comments = blog?.comments?.splice(0, 3)
+    // await blog.save()
+    // if (blog?.comments?.length > 3) blog.comments = blog?.comments?.splice(0, 3)
     return { blog, commentCount }
   } catch (error) {
     console.log({ error })

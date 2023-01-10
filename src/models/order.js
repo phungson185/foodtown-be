@@ -27,8 +27,11 @@ const orderSchema = mongoose.Schema(
     status: {
       type: Number,
       enum: common.OrderStatusType,
-      default: common.OrderStatusType.ORDER_PAYMENT_COMPLETED,
+      default: common.OrderStatusType.ORDER_PAYMENT_PENDING,
     },
+    address: {
+      type: String,
+    }
   },
   {
     timestamps: true,

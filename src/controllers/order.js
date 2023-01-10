@@ -2,7 +2,7 @@ const Order = require('../models/order')
 const Product = require('../models/product')
 const { common } = require('../utils')
 
-const createOrder = async ({ userId, products, phoneNumber, amount }) => {
+const createOrder = async ({ userId, products, phoneNumber, amount, address }) => {
   try {
     for (let i = 0; i < products.length; i++) {
       const product = await Product.findById(products[i].id);
@@ -15,6 +15,7 @@ const createOrder = async ({ userId, products, phoneNumber, amount }) => {
       products,
       phoneNumber,
       amount,
+      address
     });
     await order.save();
   } catch (error) {

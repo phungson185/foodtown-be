@@ -14,15 +14,15 @@ router.get('/', auth, async (req, res) => {
 })
 
 router.post('/', auth, async (req, res) => {
-  const { products, amount } = req.body
+  const { products, amount, phoneNumber, address } = req.body
   const userId = req.user._id
-  const phoneNumber = req.body.phoneNumber
   try {
     const result = await orderController.createOrder({
       userId,
       products,
       phoneNumber,
       amount,
+      address
     })
     return res.status(201).send({ success: true, message: 'Create Order Success', result })
   } catch (error) {
