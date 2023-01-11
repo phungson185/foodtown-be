@@ -1,37 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const productController = require("../controllers/product");
-const multer = require("multer");
 const onlyAdmin = require("../middlewares/onlyAdmin");
 const auth = require("../middlewares/auth");
-const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
-
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "DEV",
-  },
-});
-
-const upload = multer({ storage: storage });
-// const imageUpload = multer({
-//   limits: {
-//     fileSize: 1e12,
-//   },
-//   fileFilter: (req, file, cb) => {
-//     if (!file.originalname.match(/\.(png|bmp|jpe?g)$/i)) {
-//       return cb(new Error("file must be image format"));
-//     }
-//     cb(null, true);
-//   },
-// });
+const upload = require("../services/upload")
 
 router.post("/", onlyAdmin, upload.single("image"), async (req, res) => {
   const productInfo = req.body;
@@ -61,7 +33,7 @@ router.patch("/:id", onlyAdmin, upload.single("image"), async (req, res) => {
       description: req.body.description,
       quantity: parseInt(req.body.quantity),
       price: parseInt(req.body.price),
-      image: req.file.path,
+      image: req?.file?.path,
     });
     res.status(201).send({ message: "success", result });
   } catch (error) {

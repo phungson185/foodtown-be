@@ -36,9 +36,12 @@ const getProductById = async (id) => {
 
 const getProducts = async (page, limit, filter, name) => {
   try {
-    const products = await Product.find(
-      name ? { name: { $regex: `${name.toUpperCase()}` } } : {}
-    )
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: `${name}`, $options: "i" } },
+        { description: { $regex: `${name}`, $options: "i" } },
+      ],
+    })
       .skip((page - 1) * limit)
       .limit(limit)
       .sort(filter ? { [filter]: 1 } : {});
@@ -52,16 +55,13 @@ const updateProduct = async (product) => {
   try {
     const updateableFields = [
       "name",
-      "image",
       "ingredients",
       "description",
       "quantity",
       "price",
     ];
+    if (product.image) updateableFields.push("image");
     const updatingFields = Object.keys(product);
-    // if (!product.image) {
-    //   delete product.image;
-    // }
     const updatingProduct = await Product.findById(product.id);
     updatingFields.forEach((updatingField) => {
       if (

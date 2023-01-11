@@ -54,7 +54,8 @@ const createBlog = async (blog) => {
 //@Todo: fix lỗi mất thumbnail khi update
 const updateBlog = async (blog) => {
   try {
-    const updateableFields = ['name', 'thumbnail', 'content', 'description']
+    const updateableFields = ['name', 'content', 'description']
+    if (blog.thumbnail) updateableFields.push('thumbnail');
     const updatingFields = Object.keys(blog)
     const updatingBlog = await Blog.findById(blog.id)
     updatingFields.forEach((updatingField) => {

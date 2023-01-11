@@ -12,13 +12,7 @@ const blogSchema = mongoose.Schema(
       require: true,
     },
     thumbnail: {
-      name: {
-        type: String,
-        trim: true,
-      },
-      data: {
-        type: Buffer,
-      },
+      type: String,
     },
     content: {
       type: String,
