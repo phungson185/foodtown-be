@@ -22,13 +22,14 @@ const productSchema = mongoose.Schema(
       trim: true,
     },
     image: {
-      name: {
-        type: String,
-        trim: true,
-      },
-      data: {
-        type: Buffer,
-      },
+      // name: {
+      //   type: String,
+      //   trim: true,
+      // },
+      // data: {
+      //   type: Buffer,
+      // },
+      type: String,
     },
     rating: {
       type: Number,

@@ -9,10 +9,11 @@ const createProduct = async (productInfo, productImage) => {
       quantity: parseInt(productInfo.quantity),
       price: parseInt(productInfo.price),
       rating: 5,
-      image: {
-        name: productImage.originalname,
-        data: productImage.buffer,
-      },
+      // image: {
+      //   name: productImage.originalname,
+      //   data: productImage.buffer,
+      // },
+      image: productImage,
     });
     await product.save();
     return product;
@@ -58,9 +59,9 @@ const updateProduct = async (product) => {
       "price",
     ];
     const updatingFields = Object.keys(product);
-    if (!product.image) {
-      delete product.image;
-    }
+    // if (!product.image) {
+    //   delete product.image;
+    // }
     const updatingProduct = await Product.findById(product.id);
     updatingFields.forEach((updatingField) => {
       if (

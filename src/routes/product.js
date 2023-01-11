@@ -4,48 +4,64 @@ const productController = require("../controllers/product");
 const multer = require("multer");
 const onlyAdmin = require("../middlewares/onlyAdmin");
 const auth = require("../middlewares/auth");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const imageUpload = multer({
-  limits: {
-    fileSize: 1e12,
-  },
-  fileFilter: (req, file, cb) => {
-    if (!file.originalname.match(/\.(png|bmp|jpe?g)$/i)) {
-      return cb(new Error("file must be image format"));
-    }
-    cb(null, true);
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "DEV",
   },
 });
 
-router.post("/", onlyAdmin, imageUpload.single("image"), async (req, res) => {
+const upload = multer({ storage: storage });
+// const imageUpload = multer({
+//   limits: {
+//     fileSize: 1e12,
+//   },
+//   fileFilter: (req, file, cb) => {
+//     if (!file.originalname.match(/\.(png|bmp|jpe?g)$/i)) {
+//       return cb(new Error("file must be image format"));
+//     }
+//     cb(null, true);
+//   },
+// });
+
+router.post("/", onlyAdmin, upload.single("image"), async (req, res) => {
   const productInfo = req.body;
-  const productImage = req.file;
+  const productImage = req.file.path;
   try {
+    if (!productImage) {
+      res.status(401).send({ message: "failure", error: "image is required" });
+    }
+
     const result = await productController.createProduct(
       productInfo,
       productImage
     );
+
     res.status(201).send({ message: "success", result });
   } catch (error) {
     res.status(401).send({ message: "failure", error });
   }
 });
 
-router.patch("/:id", onlyAdmin, async (req, res) => {
+router.patch("/:id", onlyAdmin, upload.single("image"), async (req, res) => {
   try {
-    const result = await productController.updateBlog({
+    const result = await productController.updateProduct({
       id: req.body.id,
       name: req.body.name,
       ingredients: req.body.ingredients,
       description: req.body.description,
       quantity: parseInt(req.body.quantity),
       price: parseInt(req.body.price),
-      image: req.file
-        ? {
-            name: req.file?.originalname,
-            data: req.file?.buffer,
-          }
-        : null,
+      image: req.file.path,
     });
     res.status(201).send({ message: "success", result });
   } catch (error) {
