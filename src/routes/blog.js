@@ -3,19 +3,20 @@ const router = express.Router()
 const blogController = require('../controllers/blog')
 const auth = require('../middlewares/auth')
 const onlyAdmin = require('../middlewares/onlyAdmin')
-const multer = require('multer')
+const upload = require('../services/upload')
+// const multer = require('multer')
 
-const imageUpload = multer({
-  limits: {
-    fileSize: 1e12,
-  },
-  fileFilter: (req, file, cb) => {
-    if (!file.originalname.match(/\.(png|bmp|jpe?g)$/i)) {
-      return cb(new Error('file must be image format'))
-    }
-    cb(null, true)
-  },
-})
+// const imageUpload = multer({
+//   limits: {
+//     fileSize: 1e12,
+//   },
+//   fileFilter: (req, file, cb) => {
+//     if (!file.originalname.match(/\.(png|bmp|jpe?g)$/i)) {
+//       return cb(new Error('file must be image format'))
+//     }
+//     cb(null, true)
+//   },
+// })
 
 router.get('/', async (req, res) => {
   const { page, limit, filter, name } = req.query
@@ -48,16 +49,13 @@ router.get('/:id/comments', auth, async (req, res) => {
   }
 })
 
-router.post('/', onlyAdmin, imageUpload.single('thumbnail'), async (req, res) => {
+router.post('/', upload.single('thumbnail'), async (req, res) => {
   try {
     const result = await blogController.createBlog({
       name: req.body.name,
       description: req.body.description,
       content: req.body.content,
-      thumbnail: {
-        name: req.file.originalname,
-        data: req.file.buffer,
-      },
+      thumbnail: req?.file?.path,
     })
     res.status(201).send({ message: 'success', result })
   } catch (error) {
@@ -65,19 +63,15 @@ router.post('/', onlyAdmin, imageUpload.single('thumbnail'), async (req, res) =>
   }
 })
 
-router.patch('/', onlyAdmin, imageUpload.single('thumbnail'), async (req, res) => {
+router.patch('/', onlyAdmin, upload.single('thumbnail'), async (req, res) => {
+  
   try {
     const result = await blogController.updateBlog({
       id: req.body.id,
       name: req.body.name,
       description: req.body.description,
       content: req.body.content,
-      thumbnail: req.file
-        ? {
-            name: req.file?.originalname,
-            data: req.file?.buffer,
-          }
-        : null,
+      thumbnail: req?.file?.path,
     })
     res.status(201).send({ message: 'success', result })
   } catch (error) {
