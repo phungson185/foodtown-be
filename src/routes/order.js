@@ -7,7 +7,7 @@ router.get('/', auth, async (req, res) => {
   const userId = req.user._id
   try {
     const result = await orderController.getOrderByUser({ userId })
-    res.status(201).send({ message: 'success', result })
+    return res.status(201).send({ message: 'success', result })
   } catch (error) {
     res.status(401).send({ message: 'failure', error })
   }
@@ -22,7 +22,7 @@ router.post('/', auth, async (req, res) => {
       products,
       phoneNumber,
       amount,
-      address
+      address,
     })
     return res.status(201).send({ success: true, message: 'Create Order Success', result })
   } catch (error) {

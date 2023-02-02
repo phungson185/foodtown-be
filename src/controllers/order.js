@@ -5,9 +5,9 @@ const { common } = require('../utils')
 const createOrder = async ({ userId, products, phoneNumber, amount, address }) => {
   try {
     for (let i = 0; i < products.length; i++) {
-      const product = await Product.findById(products[i].id);
+      const product = await Product.findById(products[i].id)
       if (product.quantity === 0) {
-        throw new Error("Product out of stock");
+        throw new Error('Product out of stock')
       }
     }
     const order = new Order({
@@ -15,9 +15,9 @@ const createOrder = async ({ userId, products, phoneNumber, amount, address }) =
       products,
       phoneNumber,
       amount,
-      address
-    });
-    await order.save();
+      address,
+    })
+    await order.save()
   } catch (error) {
     console.log({ error })
   }
@@ -39,8 +39,8 @@ const cancelOrder = async ({ orderId }) => {
 
 const getOrderByUser = async ({ userId }) => {
   try {
-    const orders = await Order.find({ userId }).sort({ createdAt: -1 });
-    return orders;
+    const orders = await Order.find({ userId }).sort({ createdAt: -1 })
+    return orders
   } catch (error) {
     console.log({ error })
   }

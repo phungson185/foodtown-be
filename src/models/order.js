@@ -20,18 +20,22 @@ const orderSchema = mongoose.Schema(
       type: Number,
       require: true,
     },
-    paid: {
+    amountLack: {
       type: Number,
       default: 0,
     },
     status: {
-      type: Number,
+      type: String,
       enum: common.OrderStatusType,
       default: common.OrderStatusType.ORDER_PAYMENT_PENDING,
     },
     address: {
       type: String,
-    }
+    },
+    paymentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      require: false,
+    },
   },
   {
     timestamps: true,
