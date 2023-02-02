@@ -34,4 +34,18 @@ router.post('/', auth, async (req, res) => {
   }
 })
 
+router.put('/', auth, async (req, res) => {
+  const { paymentId, status, paid } = req.body
+  try {
+    const result = await paymentController.updatePayment({
+      paymentId,
+      status,
+      paid,
+    })
+    return res.status(200).send({ success: true, message: 'Update Payment Success', result })
+  } catch (error) {
+    res.status(400).send({ message: 'failure', error })
+  }
+})
+
 module.exports = router
