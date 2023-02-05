@@ -24,7 +24,6 @@ const paymentSchema = mongoose.Schema(
     },
     bank: {
       type: String,
-      required: true,
     },
     orderId: {
       type: mongoose.Schema.Types.ObjectId,
